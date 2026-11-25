@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wishly · Performance Lab</title>
+<style>
+:root{color-scheme:dark;font:16px system-ui;background:#081120;color:#f2f7fc}
+body{max-width:760px;margin:40px auto;padding:0 18px}
+section{padding:18px;margin:14px 0;border:1px solid #35516f;border-radius:16px;background:#14284a}
+button{padding:10px 14px;border:0;border-radius:10px;background:#bfe0ff;color:#0d2238;font-weight:700}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;color:#bfe0ff}
+small{color:#9fb4c9}
+</style>
+</head>
+<body>
+<h1>Wishly · Performance Lab</h1>
+<p>Chọn profile giả lập rồi chạy benchmark. Đây là mô phỏng chính sách chất lượng và tải JavaScript/WASM, không phải giả lập chính xác phần cứng vật lý.</p>
+<section>
+  <p><a href="./?profile=2core">Profile 2 core</a> · <a href="./?profile=4core">Profile 4 core</a> · <a href="./?profile=full">Profile mạnh</a></p>
+  <button id="run">Chạy benchmark WASM</button>
+  <pre id="out">Đang khởi tạo…</pre>
+  <small>Để đo FPS thực tế: mở trang chính, bật DevTools Performance và kiểm tra trên thiết bị thật. Có thể dùng CPU throttling trong Chrome DevTools để tạo tải nặng hơn.</small>
+</section>
+<script type="module">
+import { startRustEngine } from "./wasm-bridge.js";
+const out = document.querySelector("#out");
+const engine = await startRustEngine();
+if (!engine) out.textContent = "WASM chưa được build. Chạy: wasm-pack build --target web --release --out-dir pkg";
+else {
+  const p = engine.profile;
+  out.textContent = `Quality: ${p.level()}\nFPS cap: ${p.fps_cap()}\nDPR cap: ${p.dpr_cap()}\nSnow scale: ${p.snow_scale()}\nBlur scale: ${p.blur_scale()}\n`;
+  document.querySelector("#run").onclick = () => {
+    const n = 500000;
+    const t0 = performance.now();
+    const result = engine.benchmark(n);
+    out.textContent += `\n${n.toLocaleString()} iterations: ${(performance.now()-t0).toFixed(2)} ms\nchecksum: ${result}`;
+  };
+}
+</script>
+</body>
+</html>

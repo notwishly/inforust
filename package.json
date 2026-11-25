@@ -1,0 +1,11 @@
+{
+  "name": "wishly-rust-wasm",
+  "private": true,
+  "scripts": {
+    "build:wasm": "wasm-pack build --target web --release --out-dir pkg",
+    "serve": "python3 -m http.server 8080"
+  },
+  "devDependencies": {
+    "wasm-pack": "^0.13.1"
+  }
+}

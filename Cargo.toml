@@ -1,0 +1,20 @@
+[package]
+name = "wishly-engine"
+version = "0.1.0"
+edition = "2021"
+description = "Adaptive performance and visual-effects engine for the Wishly static website"
+license = "MIT"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+wasm-bindgen = "0.2"
+js-sys = "0.3"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true

@@ -18,3 +18,9 @@ lto = true
 codegen-units = 1
 panic = "abort"
 strip = true
+
+# The wasm-opt binary bundled by wasm-pack currently rejects target features
+# emitted by the Rust toolchain (bulk-memory / nontrapping float-to-int).
+# Rust's release profile already performs LTO and opt-level=3, so skip wasm-opt.
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = false
